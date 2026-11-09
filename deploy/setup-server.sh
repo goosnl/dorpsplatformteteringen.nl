@@ -76,7 +76,7 @@ server_ip() {
   echo "$i"
 }
 
-heeft_ipv6() { [[ -f /proc/net/if_inet6 ]] && [[ -s /proc/net/if_inet6 ]]; }
+heeft_ipv6() { ip -6 addr show scope global 2>/dev/null | grep -q inet6 || grep -q . /proc/net/if_inet6 2>/dev/null; }
 
 certificaat_bestaat() { [[ -f "/etc/letsencrypt/live/${DOMEIN}/fullchain.pem" ]]; }
 
