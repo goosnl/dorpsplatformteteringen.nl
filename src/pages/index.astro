@@ -1,0 +1,118 @@
+---
+import { Image } from 'astro:assets';
+import Basis from '../layouts/Basis.astro';
+import Icon from '../components/Icon.astro';
+import ActiviteitKaart from '../components/ActiviteitKaart.astro';
+import hero from '../assets/hero.jpg';
+import kaart from '../assets/kaart-breda-teteringen.png';
+import { getActiviteiten, getSubsidieBerichten, berichtUrl, datumLabel } from '../lib/berichten';
+
+const { lijst: activiteiten, eerstvolgende } = await getActiviteiten();
+const subsidies = await getSubsidieBerichten();
+const volgende = eerstvolgende ? datumLabel(eerstvolgende) : undefined;
+
+const pijlers = [
+  { icoon: 'mensen', tekst: 'het kunnen ontmoeten van mede dorpsbewoners' },
+  { icoon: 'hart', tekst: 'betrokkenheid bij het dorp' },
+  { icoon: 'boek', tekst: 'het kunnen leren en ontwikkelen' },
+  { icoon: 'huis', tekst: 'een prettige woonomgeving' },
+] as const;
+---
+<Basis titel="Dorpsplatform Teteringen">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="label"><i aria-hidden="true"></i>Samen verbonden in ons dorp</span>
+        <h1>Dorpsplatform <em>Teteringen</em></h1>
+        <p class="lead">Dé plek voor nieuws, activiteiten en informatie</p>
+        <div class="knoppen">
+          <a class="knop" href="/activiteiten">Alle activiteiten <Icon naam="pijlRechts" /></a>
+          <a class="knop licht" href="/contact">Contact</a>
+        </div>
+      </div>
+      <div class="hero-foto">
+        <Image src={hero} alt="Teteringen" widths={[640, 960, 1280, 1920]} sizes="(max-width: 900px) 100vw, 600px" loading="eager" fetchpriority="high" />
+        {eerstvolgende && volgende && (
+          <a class="hero-badge" href={berichtUrl(eerstvolgende)}>
+            <span class="d"><b>{volgende.groot}</b><small>{volgende.klein}</small></span>
+            <span><b>{eerstvolgende.data.titel}</b>{eerstvolgende.data.locatie}</span>
+          </a>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="agenda vlak" aria-labelledby="agenda-titel">
+    <div class="wrap">
+      <div class="sectie-kop">
+        <div>
+          <div class="eyebrow">Kalender</div>
+          <h2 id="agenda-titel">Activiteiten in Teteringen</h2>
+        </div>
+        <div class="pijlen" hidden>
+          <button type="button" data-richting="-1" aria-label="Vorige"><Icon naam="pijlLinks" /></button>
+          <button type="button" data-richting="1" aria-label="Volgende"><Icon naam="pijlRechts" /></button>
+        </div>
+      </div>
+      <div class="carrousel" aria-roledescription="carrousel" aria-label="Activiteiten">
+        <div class="track" tabindex="0">
+          {activiteiten.map((b, i) => <ActiviteitKaart bericht={b} index={i} compact />)}
+        </div>
+        <div class="dots" aria-hidden="true"></div>
+      </div>
+      <div class="midden"><a class="knop oranje" href="/activiteiten">Alle activiteiten <Icon naam="pijlRechts" /></a></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="wat-wij-doen">
+    <div class="wrap twee-kolom">
+      <div class="tekst">
+        <div class="eyebrow">Dorpsplatform teteringen</div>
+        <h2 id="wat-wij-doen">Wat wij doen</h2>
+        <p>Alle wijken in Breda hebben een wijkplatform, maar omdat Teteringen een dorp is, heeft Teteringen een dorpsplatform (niet te verwarren met de dorpsraad).</p>
+        <p>Het Dorpsplatform is er voor alle inwoners van Teteringen die een activiteit willen organiseren. Het organiseren van activiteiten in het dorp is belangrijk als het gaat om:</p>
+      </div>
+      <Image class="kaart" src={kaart} alt="Kaart van Breda met Teteringen" widths={[547]} sizes="(max-width: 900px) 100vw, 547px" />
+    </div>
+    <div class="wrap">
+      <ul class="pijlers">
+        {pijlers.map((p) => (
+          <li class="pijler"><span class="ico"><Icon naam={p.icoon} /></span>{p.tekst}</li>
+        ))}
+      </ul>
+    </div>
+    <div class="wrap twee-kolom boven">
+      <div class="tekst">
+        <h3>Verbinding in het dorp door middel van activiteiten</h3>
+        <p>Wij brengen inwoners, organisaties en initiatiefnemers met elkaar in contact. Door samen te werken kunnen ideeën groeien en ontstaat er meer betrokkenheid in het dorp. Bovendien is het in een aantal gevallen mogelijk om subsidie van de gemeente te krijgen om je activiteit mede mogelijk te maken. Het dorpsplatform kan je helpen bij de subsidieaanvraag.</p>
+        <p>Heb je een idee voor een activiteit of project in Teteringen? Dan denken wij graag met je mee. Veel initiatieven van inwoners maken het dorp socialer, leuker en sterker.</p>
+      </div>
+      <div class="tekst kaartje-licht">
+        <h2>Even voorstellen</h2>
+        <p>Het dorpsplatform wordt gevormd door Annemiek Olden, Annemieke Konings, Cor Berkhout, Joey Gosenson, Jurrie Mendelaar en Yvonne Bartholomeus. Daarnaast is Annemiek Heinen vanuit de gemeente Breda betrokken bij het platform.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="geen-boven" aria-labelledby="subsidies-titel">
+    <div class="wrap">
+      <div class="subs">
+        <div>
+          <h2 id="subsidies-titel">Subsidies</h2>
+          <a class="knop oranje" href="/subsidies">Meer informatie over subsidies <Icon naam="pijlRechts" /></a>
+        </div>
+        <ul class="subs-lijst">
+          {subsidies.map((s) => (
+            <li>
+              <a href={berichtUrl(s)}>
+                <span class="subs-titel">{s.data.titel}</span>
+                <span class="subs-tekst">{s.data.samenvatting}</span>
+                <span class="subs-link">Zie volledig bericht <Icon naam="pijlRechts" /></span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+</Basis>

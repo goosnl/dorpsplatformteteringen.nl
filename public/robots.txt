@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dorpsplatformteteringen.nl/sitemap-index.xml

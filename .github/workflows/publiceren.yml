@@ -1,0 +1,87 @@
+name: Bouwen en publiceren
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Elke nacht opnieuw bouwen, zodat activiteiten die voorbij zijn vanzelf naar achteren schuiven
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  TZ: Europe/Amsterdam
+
+jobs:
+  # Controle bij een pull request: bouwt de site maar publiceert niets
+  controleren:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: php -l php/contact-handler.php
+
+  # Publiceren naar de VPS (alleen vanaf main)
+  publiceren:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    environment:
+      name: productie
+      url: https://dorpsplatformteteringen.nl
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Site bouwen
+        run: |
+          npm ci
+          npm run build
+
+      - name: Contactformulier voorbereiden (PHPMailer)
+        run: |
+          php -l php/contact-handler.php
+          composer install --working-dir=php --no-dev --no-interaction --no-progress --classmap-authoritative
+
+      - name: SSH instellen
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Bestanden naar de server sturen
+        env:
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          PORT: ${{ secrets.DEPLOY_PORT }}
+          USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          SSH="ssh -i $HOME/.ssh/deploy_key -p ${PORT:-22} -o StrictHostKeyChecking=yes -o BatchMode=yes"
+          OPTS="-rlz --delete --delay-updates --chmod=D755,F644"
+          # Eerst de PHP-code (buiten de webmap), daarna de website zelf
+          rsync $OPTS --exclude composer.json --exclude composer.lock -e "$SSH" php/ "$USER@$HOST:app/"
+          rsync $OPTS -e "$SSH" dist/ "$USER@$HOST:public/"
+
+      - name: Opruimen
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

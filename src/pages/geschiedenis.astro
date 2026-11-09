@@ -1,0 +1,30 @@
+---
+import { Image } from 'astro:assets';
+import Basis from '../layouts/Basis.astro';
+import PaginaKop from '../components/PaginaKop.astro';
+import landkaart from '../assets/landkaart-teteringen.png';
+---
+<Basis titel="Geschiedenis" beschrijving="Teteringen is een levendig dorp in de gemeente Breda, waar het gemoedelijke dorpsgevoel hand in hand gaat met de voorzieningen van de stad dichtbij.">
+  <PaginaKop titel="Geschiedenis van Teteringen" />
+  <section>
+    <div class="wrap twee-kolom">
+      <div class="tekst">
+        <div class="eyebrow">Geschiedenis</div>
+        <h2>Over Teteringen</h2>
+        <p>Teteringen is een levendig dorp in de gemeente Breda, waar het gemoedelijke dorpsgevoel hand in hand gaat met de voorzieningen van de stad dichtbij. Met ruim 8.000 inwoners heeft Teteringen een sterke en betrokken gemeenschap waarin mensen elkaar kennen en samen activiteiten organiseren.</p>
+        <p>Het dorp kent een rijke geschiedenis die teruggaat tot de middeleeuwen. Wat ooit begon als een klein agrarisch dorp, is uitgegroeid tot een moderne woonplaats met een eigen karakter. Ondanks de groei is de dorpse sfeer altijd behouden gebleven.</p>
+        <p>Teteringen staat bekend om:</p>
+        <ul class="vinkjes">
+          <li>Een actief verenigingsleven</li>
+          <li>Sportclubs en culturele initiatieven</li>
+          <li>Basisscholen en goede voorzieningen</li>
+          <li>Betrokken inwoners en vrijwilligers</li>
+          <li>Groene omgeving met natuur dichtbij</li>
+        </ul>
+        <p>Door de ligging aan de rand van Breda woon je hier rustig, maar ben je toch snel in de stad. Dat maakt Teteringen aantrekkelijk voor jong en oud.</p>
+        <p>Bovenal is Teteringen een dorp waar mensen naar elkaar omkijken. Waar buurtinitiatieven ontstaan, evenementen worden georganiseerd en waar inwoners samen bouwen aan een fijne leefomgeving.</p>
+      </div>
+      <Image class="kaart sticky" src={landkaart} alt="Kaart van Teteringen en Breda" widths={[506]} sizes="(max-width: 900px) 100vw, 506px" />
+    </div>
+  </section>
+</Basis>

@@ -1,0 +1,43 @@
+---
+import Basis from '../layouts/Basis.astro';
+import PaginaKop from '../components/PaginaKop.astro';
+import Icon from '../components/Icon.astro';
+---
+<Basis titel="Contact" beschrijving="Heb je een vraag, tip of idee voor Teteringen? Neem gerust contact met ons op.">
+  <PaginaKop titel="Contact">
+    <p class="kop-mail"><a href="mailto:info@dorpsplatformteteringen.nl"><Icon naam="mail" /> info@dorpsplatformteteringen.nl</a></p>
+  </PaginaKop>
+  <section>
+    <div class="wrap smal">
+      <div class="midden-tekst">
+        <h2>Neem hier contact op</h2>
+        <p>Heb je een vraag, tip of idee voor Teteringen?<br />
+        Wil je een activiteit delen, een nieuwsbericht insturen of iets anders melden?<br />
+        Neem gerust contact met ons op. We denken graag met je mee!</p>
+      </div>
+
+      <form class="formulier" id="contactformulier" method="post" action="/contact.php" novalidate>
+        <div class="velden">
+          <label><span class="sr">Naam</span>
+            <input name="naam" type="text" placeholder="Uw naam*" autocomplete="name" required maxlength="100" /></label>
+          <label><span class="sr">E-mailadres</span>
+            <input name="email" type="email" placeholder="E-mailadres*" autocomplete="email" required maxlength="150" /></label>
+          <label><span class="sr">Telefoonnummer</span>
+            <input name="telefoon" type="tel" placeholder="Telefoonnummer (optioneel)" autocomplete="tel" maxlength="30" /></label>
+          <label><span class="sr">Onderwerp</span>
+            <input name="onderwerp" type="text" placeholder="Onderwerp" maxlength="150" /></label>
+          <label class="breed"><span class="sr">Bericht</span>
+            <textarea name="bericht" rows="6" placeholder="Deel hier uw bericht / vraag..." required maxlength="5000"></textarea></label>
+          <!-- Spamval: dit veld is onzichtbaar voor bezoekers en moet leeg blijven -->
+          <div class="hp" aria-hidden="true">
+            <label>Website <input name="website" type="text" tabindex="-1" autocomplete="off" /></label>
+          </div>
+          <input type="hidden" name="token" value="" />
+        </div>
+        <button class="knop vol" type="submit">Versturen</button>
+        <p class="formulier-status" role="status" aria-live="polite"></p>
+        <noscript><p class="formulier-status fout">Mail ons via <a href="mailto:info@dorpsplatformteteringen.nl">info@dorpsplatformteteringen.nl</a>.</p></noscript>
+      </form>
+    </div>
+  </section>
+</Basis>

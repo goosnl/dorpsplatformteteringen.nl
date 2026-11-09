@@ -1,0 +1,13 @@
+---
+import Icon from './Icon.astro';
+import type { Bericht } from '../lib/berichten';
+interface Props { bericht: Bericht; }
+const { datumTekst, tijd, locatie } = Astro.props.bericht.data;
+---
+{(datumTekst || tijd || locatie) && (
+  <ul class="meta">
+    {datumTekst && <li><Icon naam="kalender" />{datumTekst}</li>}
+    {tijd && <li><Icon naam="klok" />{tijd}</li>}
+    {locatie && <li><Icon naam="locatie" />{locatie}</li>}
+  </ul>
+)}

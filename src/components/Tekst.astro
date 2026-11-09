@@ -1,0 +1,6 @@
+---
+// Zet tekst met lege regels om in losse alinea's
+interface Props { tekst: string; }
+const alineas = Astro.props.tekst.split(/\n\s*\n/).map((a) => a.trim()).filter(Boolean);
+---
+{alineas.map((a) => <p>{a}</p>)}

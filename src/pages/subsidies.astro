@@ -1,0 +1,21 @@
+---
+import Basis from '../layouts/Basis.astro';
+import PaginaKop from '../components/PaginaKop.astro';
+import Icon from '../components/Icon.astro';
+import { getSubsidieBerichten, berichtUrl } from '../lib/berichten';
+const subsidies = await getSubsidieBerichten();
+---
+<Basis titel="Subsidies">
+  <PaginaKop titel="Subsidies" />
+  <section>
+    <div class="wrap raster">
+      {subsidies.map((s) => (
+        <article class="kaart-tekst">
+          <h2><a href={berichtUrl(s)}>{s.data.titel}</a></h2>
+          <p>{s.data.samenvatting}</p>
+          <a class="knop klein" href={berichtUrl(s)}>Zie volledig bericht <Icon naam="pijlRechts" /></a>
+        </article>
+      ))}
+    </div>
+  </section>
+</Basis>

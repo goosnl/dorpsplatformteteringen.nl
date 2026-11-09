@@ -1,0 +1,15 @@
+---
+import Basis from '../layouts/Basis.astro';
+import PaginaKop from '../components/PaginaKop.astro';
+import ActiviteitKaart from '../components/ActiviteitKaart.astro';
+import { getActiviteiten } from '../lib/berichten';
+const { lijst } = await getActiviteiten();
+---
+<Basis titel="Activiteiten">
+  <PaginaKop eyebrow="Kalender" titel="Activiteiten in Teteringen" />
+  <section>
+    <div class="wrap raster">
+      {lijst.map((b, i) => <ActiviteitKaart bericht={b} index={i} />)}
+    </div>
+  </section>
+</Basis>

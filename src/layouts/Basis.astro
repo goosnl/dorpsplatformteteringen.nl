@@ -1,0 +1,84 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/plus-jakarta-sans';
+import '../styles/global.css';
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+import Icon from '../components/Icon.astro';
+
+interface Props { titel: string; beschrijving?: string; }
+const { titel, beschrijving = 'Dé plek voor nieuws, activiteiten en informatie' } = Astro.props;
+const siteNaam = 'Dorpsplatform Teteringen';
+const volledigeTitel = titel === siteNaam ? siteNaam : `${titel} - ${siteNaam}`;
+const pad = Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '/') || '/';
+const canonical = new URL(pad, Astro.site);
+
+const menu = [
+  { href: '/', tekst: 'Dorpsplatform' },
+  { href: '/geschiedenis', tekst: 'Geschiedenis' },
+  { href: '/subsidies', tekst: 'Subsidies' },
+  { href: '/activiteiten', tekst: 'Activiteiten' },
+  { href: '/contact', tekst: 'Contact', cta: true },
+];
+const actief = (href: string) => (href === '/' ? pad === '/' : pad.startsWith(href));
+---
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{volledigeTitel}</title>
+  <meta name="description" content={beschrijving} />
+  <link rel="canonical" href={canonical} />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" href="/favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <meta name="theme-color" content="#274e1d" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="nl_NL" />
+  <meta property="og:site_name" content={siteNaam} />
+  <meta property="og:title" content={volledigeTitel} />
+  <meta property="og:description" content={beschrijving} />
+  <meta property="og:url" content={canonical} />
+  <link rel="sitemap" href="/sitemap-index.xml" />
+  <script is:inline src="/js/site.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#inhoud">Naar de inhoud</a>
+  <header class="kop-site">
+    <nav class="nav" aria-label="Hoofdmenu">
+      <a class="logo" href="/" aria-label="Dorpsplatform Teteringen – home">
+        <Image src={logo} alt="Dorpsplatform Teteringen" width={110} densities={[1, 2]} loading="eager" />
+      </a>
+      <button class="menu-knop" type="button" aria-expanded="false" aria-controls="menu" aria-label="Menu">
+        <Icon naam="menu" class="open" /><Icon naam="sluiten" class="dicht" />
+      </button>
+      <ul id="menu">
+        {menu.map((m) => (
+          <li><a href={m.href} class:list={{ cta: m.cta, actief: actief(m.href) }} aria-current={actief(m.href) ? 'page' : undefined}>{m.tekst}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </header>
+
+  <main id="inhoud">
+    <slot />
+  </main>
+
+  <footer class="voet">
+    <div class="wrap voet-grid">
+      <div>
+        <Image src={logo} alt="Dorpsplatform Teteringen" width={130} densities={[1, 2]} />
+        <p>Samen verbonden in ons dorp</p>
+      </div>
+      <ul>
+        {menu.map((m) => <li><a href={m.href}>{m.tekst}</a></li>)}
+      </ul>
+      <ul>
+        <li><a href="mailto:info@dorpsplatformteteringen.nl"><Icon naam="mail" /> info@dorpsplatformteteringen.nl</a></li>
+      </ul>
+    </div>
+    <p class="copy">© {new Date().getFullYear()} – Dorpsplatformteteringen.nl</p>
+  </footer>
+</body>
+</html>

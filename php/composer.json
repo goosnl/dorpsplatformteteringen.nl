@@ -1,0 +1,13 @@
+{
+  "name": "dorpsplatformteteringen/contact",
+  "description": "Afhandeling van het contactformulier",
+  "type": "project",
+  "require": {
+    "php": ">=8.1",
+    "phpmailer/phpmailer": "^6.10"
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true
+  }
+}

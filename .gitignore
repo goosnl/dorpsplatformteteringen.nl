@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.astro/
+php/vendor/
+.env
+.DS_Store
+*.log

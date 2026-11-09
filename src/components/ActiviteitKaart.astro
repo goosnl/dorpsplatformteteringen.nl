@@ -1,0 +1,26 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import Meta from './Meta.astro';
+import Tekst from './Tekst.astro';
+import { berichtUrl, datumLabel, type Bericht } from '../lib/berichten';
+interface Props { bericht: Bericht; index?: number; compact?: boolean; }
+const { bericht, index = 0, compact = false } = Astro.props;
+const label = datumLabel(bericht);
+const kleuren = ['groen', 'oranje', 'lime'];
+const url = berichtUrl(bericht);
+---
+<article class:list={['activiteit', `kleur-${kleuren[index % 3]}`, { compact }]}>
+  <a class="beeld" href={url} tabindex="-1" aria-hidden="true">
+    {bericht.data.afbeelding
+      ? <Image src={bericht.data.afbeelding} alt="" widths={[400, 800]} sizes="(max-width: 620px) 86vw, 400px" />
+      : <Icon naam="kalender" class="beeld-icoon" />}
+    <span class:list={['datum', { lang: !bericht.data.datum }]}><b>{label.groot}</b><small>{label.klein}</small></span>
+  </a>
+  <div class="inhoud">
+    <h3><a href={url}>{bericht.data.titel}</a></h3>
+    <div class="samenvatting"><Tekst tekst={bericht.data.samenvatting} /></div>
+    <Meta bericht={bericht} />
+    <a class="knop klein" href={url}>Zie volledig bericht <Icon naam="pijlRechts" /></a>
+  </div>
+</article>
